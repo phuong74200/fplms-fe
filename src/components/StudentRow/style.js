@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const Container = styled.div`
     width: 100%;
-    display: grid;
+    display: ${({ isDisplay }) => (isDisplay == true ? 'flex' : 'none')};
     row-gap: 5px;
 `;
 
@@ -23,4 +23,12 @@ const GroupInput = styled.input`
     width: 100%;
 `;
 
-export { Container, Row, TableCell, GroupInput };
+const RemoveBtn = styled.button`
+    background-color: #eef2ff;
+    border: none;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+`;
+
+export { Container, Row, TableCell, GroupInput, RemoveBtn };

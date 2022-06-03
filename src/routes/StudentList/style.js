@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const StyledContainer = styled.div`
     max-width: 1100px;
     position: relative;
+    margin: 0 auto;
     * {
         box-sizing: border-box;
     }
@@ -80,9 +81,10 @@ const StFilterRight = styled.div`
     align-items: center;
 `;
 
-const SettingBtn = styled.div`
+const SettingBtn = styled.button`
     max-height: 40px;
     display: flex;
+    border: none;
     align-items: center;
     background: #7799fa;
     border-radius: 4px;

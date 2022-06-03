@@ -4,11 +4,10 @@ import { Container, OptContainer, Option, Selected } from './style';
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-const Selection = () => {
+const Selection = ({ arr, label }) => {
     const [isDisplay, setDisplay] = useState(false);
     const [click, setClick] = useState(0);
-    const [data, setData] = useState('Selected Role');
-
+    const [select, setSelect] = useState(label);
     const handleClick = () => {
         setClick(click + 1);
     };
@@ -24,12 +23,15 @@ const Selection = () => {
         <>
             <Container onClick={handleClick}>
                 <Selected>
-                    <Option>{data}</Option>
+                    <Option>{select}</Option>
                     <KeyboardArrowDownIcon />
                 </Selected>
                 <OptContainer isDisplay={isDisplay}>
-                    <Option onClick={() => setData('Leader')}>Leader</Option>
-                    <Option onClick={() => setData('Member')}>Member</Option>
+                    {arr.map((data, index) => (
+                        <Option key={index} onClick={() => setSelect(data)}>
+                            {data}
+                        </Option>
+                    ))}
                 </OptContainer>
             </Container>
         </>

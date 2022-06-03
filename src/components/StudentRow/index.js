@@ -4,9 +4,14 @@ import { TableCell, Container, Row, GroupInput } from './style';
 
 const StudentRow = ({ studentName, studentID, groupName, role, reports, action }) => {
     const [group, setGroup] = useState(groupName);
+    const [isDisplay, setDisplay] = useState(true);
+    const handleRemove = () => {
+        console.log(isDisplay);
+        setDisplay(false);
+    };
     return (
         <>
-            <Container>
+            <Container isDisplay={isDisplay}>
                 <Row>
                     <TableCell>{studentName}</TableCell>
                     <TableCell>{studentID}</TableCell>
@@ -20,7 +25,9 @@ const StudentRow = ({ studentName, studentID, groupName, role, reports, action }
                     </TableCell>
                     <TableCell>{role}</TableCell>
                     <TableCell>{reports}</TableCell>
-                    <TableCell>{action}</TableCell>
+                    <TableCell onClick={handleRemove} style={{ cursor: 'pointer' }}>
+                        {action}
+                    </TableCell>
                 </Row>
             </Container>
         </>

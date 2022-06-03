@@ -17,6 +17,14 @@ export const Selected = styled.div`
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    svg {
+        width: 1.4rem;
+        height: 1.4rem;
+        padding: 1px;
+        margin: 0 5px;
+        background-color: #bbccfd;
+        border-radius: 50%;
+    }
 `;
 export const OptContainer = styled.div`
     width: 100%;

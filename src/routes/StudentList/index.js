@@ -1,13 +1,14 @@
 import { useState } from 'react';
 
 import { StudentRow } from '../../components';
+import Pagination from '../../components/Pagination';
+import Selection from '../../components/Selection';
 import {
     StyledContainer,
     StHeader,
     StFilterColumn,
     StFilterLabel,
     StSerachBox,
-    StFilterBox,
     StFilterContainer,
     StFilterLeft,
     StFilterRight,
@@ -25,11 +26,14 @@ import {
     TableCell,
 } from './style';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 
 const StudentList = () => {
     document.title = 'StudentList';
+    const [search, setSearch] = useState('');
+    const roles = ['Leader', 'Member'];
+    const groups = ['Group 1', 'Group 2', 'Group 3', 'Group 4', 'Group 5'];
+
     const createData = (studentName, studentID, groupName, role, reports, action) => {
         return { studentName, studentID, groupName, role, reports, action };
     };
@@ -45,12 +49,8 @@ const StudentList = () => {
         createData('Duong Chi Khang', 'SE161108', 'Group 2', 'Member', 32, 'Remove'),
     ]);
 
-    const [search, setSearch] = useState('');
-
     return (
         <>
-            {/* <StyledModal></StyledModal> */}
-
             <StyledContainer>
                 <StHeader>
                     <StLogo />
@@ -59,65 +59,63 @@ const StudentList = () => {
                         <StClass>SE1631</StClass>
                     </StHeaderContent>
                 </StHeader>
-                <StFilterContainer>
-                    <StFilterLeft>
-                        <StFilterColumn>
-                            <StFilterLabel>Search Students</StFilterLabel>
-                            <StSerachBox
-                                type="text"
-                                value={search}
-                                placeholder="Search students by name..."
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </StFilterColumn>
-                        <StFilterColumn>
-                            <StFilterLabel>Roles</StFilterLabel>
-                            <StFilterBox>
-                                All Roles
-                                <ExpandMoreIcon />
-                            </StFilterBox>
-                        </StFilterColumn>
-                        <StFilterColumn>
-                            <StFilterLabel>Group by</StFilterLabel>
-                            <StFilterBox>
-                                Group
-                                <ExpandMoreIcon />
-                            </StFilterBox>
-                        </StFilterColumn>
-                    </StFilterLeft>
-                    <StFilterRight>
-                        <StFilterColumn style={{ margin: 0 }}>
-                            <StFilterLabel style={{ color: '#fff' }}>G</StFilterLabel>
-                            <SettingBtn>
-                                <SettingsIcon />
-                                Save
-                            </SettingBtn>
-                        </StFilterColumn>
-                    </StFilterRight>
-                </StFilterContainer>
+                <form>
+                    <StFilterContainer>
+                        <StFilterLeft>
+                            <StFilterColumn>
+                                <StFilterLabel>Search Students</StFilterLabel>
+                                <StSerachBox
+                                    type="text"
+                                    value={search}
+                                    placeholder="Search students by name..."
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </StFilterColumn>
+                            <StFilterColumn>
+                                <StFilterLabel>Role</StFilterLabel>
 
-                {/* Student List Table */}
-                <StudentListContainer>
-                    <TableContainer>
-                        <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
-                            <THead>
-                                <TRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>ID</TableCell>
-                                    <TableCell>Group</TableCell>
-                                    <TableCell>Role</TableCell>
-                                    <TableCell>Reports</TableCell>
-                                    <TableCell>Actions</TableCell>
-                                </TRow>
-                            </THead>
-                            <TBody>
-                                {rows.map((studentInfo, index) => (
-                                    <StudentRow key={index} {...studentInfo} />
-                                ))}
-                            </TBody>
-                        </Table>
-                    </TableContainer>
-                </StudentListContainer>
+                                <Selection arr={roles} label={'Select Role'} />
+                            </StFilterColumn>
+                            <StFilterColumn>
+                                <StFilterLabel>Group by</StFilterLabel>
+                                <Selection arr={groups} label={'Select Group'} />
+                            </StFilterColumn>
+                        </StFilterLeft>
+                        <StFilterRight>
+                            <StFilterColumn style={{ margin: 0 }}>
+                                <StFilterLabel style={{ color: '#fff' }}>G</StFilterLabel>
+                                <SettingBtn type="submit">
+                                    <SettingsIcon />
+                                    Save
+                                </SettingBtn>
+                            </StFilterColumn>
+                        </StFilterRight>
+                    </StFilterContainer>
+
+                    {/* Student List Table */}
+                    <StudentListContainer>
+                        <TableContainer>
+                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                                <THead>
+                                    <TRow>
+                                        <TableCell>Name</TableCell>
+                                        <TableCell>ID</TableCell>
+                                        <TableCell>Group</TableCell>
+                                        <TableCell>Role</TableCell>
+                                        <TableCell>Reports</TableCell>
+                                        <TableCell>Actions</TableCell>
+                                    </TRow>
+                                </THead>
+                                <TBody>
+                                    {rows.map((studentInfo, index) => (
+                                        <StudentRow key={index} {...studentInfo} />
+                                    ))}
+                                </TBody>
+                            </Table>
+                        </TableContainer>
+                    </StudentListContainer>
+                </form>
+                <Pagination />
             </StyledContainer>
         </>
     );
