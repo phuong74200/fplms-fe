@@ -6,7 +6,6 @@ import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 import StudentList from './StudentList';
 
-<<<<<<< HEAD
 export const publicRoute = [
     {
         path: 'not-found',
@@ -27,8 +26,6 @@ export const privateRoute = [
     },
 ];
 
-=======
->>>>>>> dev
 export const RouterComponent = ({ isAuth }) => {
     const publicRoute = [
         {
@@ -40,7 +37,15 @@ export const RouterComponent = ({ isAuth }) => {
         },
     ];
 
-    const privateRoute = [];
+    const privateRoute = [
+        {
+            path: 'student-list',
+            name: 'student-list',
+            component: <StudentList />,
+            exact: true,
+            restrict: true,
+        },
+    ];
 
     return (
         <BrowserRouter>
