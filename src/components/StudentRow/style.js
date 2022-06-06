@@ -7,6 +7,7 @@ const Container = styled.div`
 `;
 
 const Row = styled.div`
+    width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     background-color: #eef2ff;
