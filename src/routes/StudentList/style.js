@@ -25,6 +25,7 @@ const StFilterContainer = styled.div`
 `;
 
 const StFilterColumn = styled.div`
+    height: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -38,13 +39,15 @@ const StFilterLabel = styled.div`
 `;
 
 const StSerachBox = styled.input`
-    max-height: 40px;
-    padding: 0.8rem;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border-radius: 2px;
     background-color: #eef2ff;
-    border-radius: 4px;
-    border: 1px solid #99b3fb;
-    color: #8b8b8b;
+    border: 1px solid #5680f9;
+    color: #434343;
     font-size: 1rem;
+    line-height: 1.5rem;
+    outline: none;
 `;
 
 const StFilterBox = styled.div`
@@ -72,7 +75,7 @@ const StFilterBox = styled.div`
 
 const StFilterLeft = styled.div`
     display: flex;
-    align-items: center;
+    align-items: flex-end;
 `;
 
 const StFilterRight = styled.div`

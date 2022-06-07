@@ -31,8 +31,38 @@ import SettingsIcon from '@mui/icons-material/Settings';
 const StudentList = () => {
     document.title = 'StudentList';
     const [search, setSearch] = useState('');
-    const roles = ['Leader', 'Member'];
-    const groups = ['Group 1', 'Group 2', 'Group 3', 'Group 4', 'Group 5'];
+    const roles = [
+        {
+            content: 'Leader',
+            value: 1,
+        },
+        {
+            content: 'Memeber',
+            value: 2,
+        },
+    ];
+    const groups = [
+        {
+            content: 'Group 1',
+            value: 'Group 1',
+        },
+        {
+            content: 'Group 2',
+            value: 'Group 2',
+        },
+        {
+            content: 'Group 3',
+            value: 'Group 3',
+        },
+        {
+            content: 'Group 4',
+            value: 'Group 4',
+        },
+        {
+            content: 'Group 5',
+            value: 'Group 5',
+        },
+    ];
 
     const createData = (studentName, studentID, groupName, role, reports, action) => {
         return { studentName, studentID, groupName, role, reports, action };
@@ -63,7 +93,7 @@ const StudentList = () => {
                     <StFilterContainer>
                         <StFilterLeft>
                             <StFilterColumn>
-                                <StFilterLabel>Search Students</StFilterLabel>
+                                <small>Search Students</small>
                                 <StSerachBox
                                     type="text"
                                     value={search}
@@ -72,13 +102,18 @@ const StudentList = () => {
                                 />
                             </StFilterColumn>
                             <StFilterColumn>
-                                <StFilterLabel>Role</StFilterLabel>
-
-                                <Selection arr={roles} label={'Select Role'} />
+                                <Selection
+                                    title={'Role'}
+                                    options={roles}
+                                    placeholder={'Select Role'}
+                                />
                             </StFilterColumn>
                             <StFilterColumn>
-                                <StFilterLabel>Group by</StFilterLabel>
-                                <Selection arr={groups} label={'Select Group'} />
+                                <Selection
+                                    title={'Group by'}
+                                    options={groups}
+                                    placeholder={'Select Group'}
+                                />
                             </StFilterColumn>
                         </StFilterLeft>
                         <StFilterRight>
