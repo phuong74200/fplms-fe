@@ -16,6 +16,7 @@ import {
     Row,
     TableHeader,
     Avatars,
+    DraftEditor,
     ConfirmModal,
 } from '../../components';
 import { getTokenInfo } from '../../utils/account';
@@ -30,6 +31,7 @@ import {
     Title,
     SideBar,
     CommingContainer,
+    FixedScoreBar,
     Icon,
     CommingSection,
     RightSide,
@@ -47,6 +49,8 @@ import {
     Input,
     Type,
     StudentViewContainer,
+    FeedBackContainer,
+    FeedBackView,
 } from './style';
 
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -124,7 +128,7 @@ Whether you’re meeting in-person or meeting asynchronously, these four agenda 
 </ol>
 `;
 
-const SubmitEdtior = ({ isOpen, setOpen, type, groupId }) => {
+const SubmitEdtior = ({ isOpen, setOpen, type, groupId, group }) => {
     const [editorState, setEditorState] = useState(
         EditorState.createWithContent(fromHTML(TEMPLATE2))
     );
@@ -135,6 +139,15 @@ const SubmitEdtior = ({ isOpen, setOpen, type, groupId }) => {
         setTitle('');
     }, [isOpen]);
 
+    const getAvatars = () => {
+        if (group && group.studentDtoSet) {
+            if (type == 'cycle') {
+                return group.studentDtoSet.map((student) => student.name.slice(0, 2));
+            }
+        }
+        return [];
+    };
+
     const submitCycle = () => {
         const data = {
             title: title,
@@ -142,7 +155,6 @@ const SubmitEdtior = ({ isOpen, setOpen, type, groupId }) => {
             resourceLink: '',
             groupId: parseInt(groupId),
         };
-        console.log(data);
         post('/' + type + '-reports', data)
             .then((res) => {
                 if (res.data.code == 200) {
@@ -162,6 +174,7 @@ const SubmitEdtior = ({ isOpen, setOpen, type, groupId }) => {
                 closeFn={() => setOpen(false)}
                 editorState={editorState}
                 setEditorState={setEditorState}
+                avatars={getAvatars()}
             >
                 {/* <GoalContainer>
                     <GoalDes>Reports Stats:</GoalDes>
@@ -184,11 +197,10 @@ const SubmitEdtior = ({ isOpen, setOpen, type, groupId }) => {
     );
 };
 
-const TextEditor = ({ report, close, progress }) => {
+const TextEditor = ({ report, close, progress, avatars }) => {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
+    const [viewState, setViewState] = useState(EditorState.createEmpty());
     const [title, setTitle] = useState('');
-
-    const avts = ['TP', 'NK', 'TN', 'TT', 'NH'];
 
     useEffect(() => {
         if (report) {
@@ -203,44 +215,48 @@ const TextEditor = ({ report, close, progress }) => {
             }
             setTitle(report.title || '');
         }
+        try {
+            setViewState(
+                report.content
+                    ? EditorState.createWithContent(convertFromRaw(JSON.parse(report.feedback)))
+                    : EditorState.createEmpty()
+            );
+        } catch (err) {
+            setViewState(EditorState.createEmpty());
+        }
     }, [report]);
 
-    const submitCycle = () => {
-        const data = {
-            title: title,
-            content: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
-            resourceLink: '',
-            groupId: parseInt(report.groupId),
-        };
-        post('/' + report.type + '-reports', data)
-            .then((res) => {
-                if (res.data.code == 200) {
-                    success(res.data.message);
-                } else {
-                    error(res.data.message);
-                }
-            })
-            .catch(() => {
-                error('An error occured');
-            });
-    };
+    // const submitCycle = () => {
+    //     const data = {
+    //         title: title,
+    //         content: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
+    //         resourceLink: '',
+    //         groupId: parseInt(report.groupId),
+    //     };
+    //     post('/' + report.type + '-reports', data)
+    //         .then((res) => {
+    //             if (res.data.code == 200) {
+    //                 success(res.data.message);
+    //             } else {
+    //                 error(res.data.message);
+    //             }
+    //         })
+    //         .catch(() => {
+    //             error('An error occured');
+    //         });
+    // };
+
+    console.log(report.mark);
 
     return (
         <Overlay isOpen={report?.isOpen} fullFill={true}>
             <AdvanceEditor
                 closeFn={close}
-                avatars={avts}
+                avatars={avatars}
                 editorState={editorState}
                 setEditorState={setEditorState}
                 headColor={report && report.type == 'cycle' ? COLOR.blue[0] : COLOR.green[0]}
             >
-                <GoalContainer>
-                    <GoalDes>Reports Stats:</GoalDes>
-                    <StatusBar progress={progress} />
-                    <GoalCounter>
-                        <span>{progress[0]}</span> / {progress[1]}
-                    </GoalCounter>
-                </GoalContainer>
                 <GoalContainer>
                     <GoalDes>Report Title</GoalDes>
                     <Input
@@ -249,13 +265,36 @@ const TextEditor = ({ report, close, progress }) => {
                         onChange={(e) => setTitle(e.target.value || '')}
                     />
                 </GoalContainer>
-                <SendBtn onClick={submitCycle}>Send Report</SendBtn>
+                {report.type == 'cycle' && (
+                    <>
+                        <FeedBackContainer>
+                            <GoalDes>Reports Stats:</GoalDes>
+                            <StatusBar progress={[report.cycleNumber, progress]} />
+                            <GoalCounter>
+                                <span>{report.cycleNumber}</span> / {progress}
+                            </GoalCounter>
+                            <GoalDes>Reports Feedback:</GoalDes>
+                            <FeedBackView>
+                                <DraftEditor
+                                    id={`feedback_${report.groupId}_${report.type}`}
+                                    placeholder="Write your feedback..."
+                                    editorState={viewState}
+                                    setEditorState={setViewState}
+                                    readOnly
+                                />
+                            </FeedBackView>
+                            <GoalDes>Reports Score:</GoalDes>
+                            <FixedScoreBar>{report.mark}</FixedScoreBar>
+                        </FeedBackContainer>
+                    </>
+                )}
+                {/* <SendBtn onClick={submitCycle}>Send Report</SendBtn> */}
             </AdvanceEditor>
         </Overlay>
     );
 };
 
-const FeedBack = ({ list, setList, progress }) => {
+const FeedBack = ({ list, setList, progress, group }) => {
     const open = (report) => {
         setList((list) => {
             let _list = [...list];
@@ -282,6 +321,19 @@ const FeedBack = ({ list, setList, progress }) => {
         });
     };
 
+    const getAvatars = (report) => {
+        if (group && group.studentDtoSet) {
+            if (report.type == 'cycle') {
+                return group.studentDtoSet.map((student) => student.name.slice(0, 2));
+            } else {
+                return group.studentDtoSet
+                    .filter((student) => student.id == report.studentId)
+                    .map((student) => student.name.slice(0, 2));
+            }
+        }
+        return [];
+    };
+
     return (
         <Table columns="200px 1fr 200px 200px">
             <tbody>
@@ -303,9 +355,10 @@ const FeedBack = ({ list, setList, progress }) => {
                     return (
                         <React.Fragment key={report.displayId}>
                             <TextEditor
-                                progress={[report.cycleNumber, progress]}
+                                progress={progress}
                                 report={report}
                                 close={() => close(report)}
+                                avatars={getAvatars(report)}
                             />
                             <Row feedback={report.type} onClick={() => open(report)}>
                                 <td>
@@ -322,8 +375,7 @@ const FeedBack = ({ list, setList, progress }) => {
                                     <Title>{report.reportTime}</Title>
                                 </td>
                                 <td>
-                                    {' '}
-                                    <Avatars list={['TP', 'NK', 'TN', 'TT', 'NH']} />
+                                    <Avatars list={getAvatars(report)} />
                                 </td>
                             </Row>
                         </React.Fragment>
@@ -353,6 +405,7 @@ const StudentView = ({ groupId, classId }) => {
     const [progress, setProgress] = useState(1);
     const [list, setList] = useState([]);
     const [events, setEvents] = useState([]);
+    const [group, setGroup] = useState({});
 
     const [topicList, setTopicList] = useState(
         new Array(20).fill('').map((k, i) => ({
@@ -466,6 +519,7 @@ const StudentView = ({ groupId, classId }) => {
         get(`/classes/${classId}/groups/details`, { classId: classId }).then((res) => {
             const data = res.data.data;
             if (res.data.code == 200) {
+                setGroup(res.data.data);
                 if (data.projectDTO == null) {
                     const student = data.studentDtoSet.filter(
                         (student) => student.email == user.email
@@ -562,17 +616,19 @@ const StudentView = ({ groupId, classId }) => {
                 isOpen={cycleOpen}
                 type="cycle"
                 groupId={groupId}
+                group={group}
             />
             <SubmitEdtior
                 setOpen={setProgressOpen}
                 isOpen={progressOpen}
                 type="progress"
                 groupId={groupId}
+                group={group}
             />
             <Container>
                 {list.length ? (
                     <TableContainer>
-                        <FeedBack list={list} setList={setList} progress={progress} />
+                        <FeedBack group={group} list={list} setList={setList} progress={progress} />
                     </TableContainer>
                 ) : (
                     <NeResultContainer>

@@ -45,7 +45,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
-const TextEditor = ({ report, close, progress }) => {
+const TextEditor = ({ report, close, progress, avatars }) => {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [viewState, setViewState] = useState(EditorState.createEmpty());
     const [mark, setMark] = useState(0);
@@ -104,7 +104,7 @@ const TextEditor = ({ report, close, progress }) => {
                 closeFn={close}
                 editorState={viewState}
                 setEditorState={setViewState}
-                avatars={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']}
+                avatars={avatars || ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']}
                 readOnly
                 headColor={report && report.type == 'cycle' ? COLOR.blue[0] : COLOR.green[0]}
             >
@@ -145,7 +145,7 @@ const TextEditor = ({ report, close, progress }) => {
     );
 };
 
-const TopicPickedView = ({ list, setList, progress }) => {
+const TopicPickedView = ({ list, setList, progress, group }) => {
     const open = (report) => {
         setList((list) => {
             let _list = [...list];
@@ -172,6 +172,20 @@ const TopicPickedView = ({ list, setList, progress }) => {
         });
     };
 
+    const getAvatars = (report) => {
+        console.log(group);
+        if (group && group.studentDtoSet) {
+            if (report.type == 'cycle') {
+                return group.studentDtoSet.map((student) => student.name.slice(0, 2));
+            } else {
+                return group.studentDtoSet
+                    .filter((student) => student.id == report.studentId)
+                    .map((student) => student.name.slice(0, 2));
+            }
+        }
+        return [];
+    };
+
     return (
         <Table columns="200px 1fr 200px 200px">
             <tbody>
@@ -188,6 +202,7 @@ const TopicPickedView = ({ list, setList, progress }) => {
                                 report={item}
                                 close={() => close(item)}
                                 progress={progress}
+                                avatars={getAvatars(item)}
                             />
                             <Row feedback={item.type} onClick={() => open(item)}>
                                 <td>
@@ -202,7 +217,7 @@ const TopicPickedView = ({ list, setList, progress }) => {
                                     <Title>{item.reportTime}</Title>
                                 </td>
                                 <td>
-                                    <Avatars list={['TP', 'NK', 'TN', 'TT', 'NH']} />
+                                    <Avatars list={getAvatars(item)} />
                                 </td>
                             </Row>
                         </React.Fragment>
@@ -225,6 +240,7 @@ const LecturerView = ({ groupId, classId }) => {
     });
     const [progress, setProgress] = useState(0);
     const [list, setList] = useState([]);
+    const [groups, setGroups] = useState({});
 
     const getReports = () => {
         get('/cycle-reports', { groupId }).then((res) => {
@@ -258,6 +274,11 @@ const LecturerView = ({ groupId, classId }) => {
     };
 
     useEffect(() => {
+        get(`/classes/${classId}/groups/details`).then((res) => {
+            if (res.data.code == 200) {
+                setGroups(res.data.data);
+            }
+        });
         get(`/classes/${classId}`, { classId: classId }).then((res) => {
             if (res.data.code == 200) {
                 setProgress(res.data.data.cycleDuration);
@@ -365,7 +386,12 @@ const LecturerView = ({ groupId, classId }) => {
             />
             <Container>
                 <TableContainer>
-                    <TopicPickedView list={list} setList={setList} progress={progress} />
+                    <TopicPickedView
+                        group={groups}
+                        list={list}
+                        setList={setList}
+                        progress={progress}
+                    />
                 </TableContainer>
                 <SideBar>
                     <Calendar onChange={onDateChange} />

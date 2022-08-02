@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const InputNumber = ({ init, max, onChange, className }) => {
+const InputNumber = ({ init, max, onChange, className, readOnly, defaultValue }) => {
     const [value, setValue] = useState(init || 0);
 
     const min = 0;
@@ -36,6 +36,8 @@ const InputNumber = ({ init, max, onChange, className }) => {
             onChange={change}
             onBlur={change}
             onKeyUp={onChange}
+            defaultValue={defaultValue}
+            readOnly={readOnly}
         />
     );
 };

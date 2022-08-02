@@ -301,6 +301,26 @@ export const ScoreBar = styled(InputNumber)`
     }
 `;
 
+export const FixedScoreBar = styled.div`
+    width: 100%;
+    height: auto;
+    outline: none;
+    border: none;
+    resize: none;
+    font-weight: bold;
+    border-radius: 2px;
+    font-size: 1rem;
+    padding: 1rem;
+    background: ${COLOR.blue[0]};
+    font-family: Lato;
+    color: #fff;
+    box-sizing: border-box;
+
+    ::placeholder {
+        color: #f2f2f2;
+    }
+`;
+
 export const EditorContainer = styled.div`
     padding: 6rem 12rem;
     box-sizing: border-box;
